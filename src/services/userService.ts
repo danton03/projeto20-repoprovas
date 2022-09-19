@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { findById, getUserByEmail, storeUser } from '../repositories/userRepository';
 import bcrypt from "bcrypt";
-import { TCreateUser } from '../types/authTypes';
+import { TCreateUser, TUserReq } from '../types/authTypes';
 import { conflictError, unauthorizedError } from '../utils/errorUtils';
 
 dotenv.config();
@@ -23,7 +23,7 @@ export async function loginService(authData: TCreateUser) {
   return token;
 }
 
-export async function createUserService(authData: TCreateUser) {
+export async function createUserService(authData: TUserReq) {
   // 1 - Verificar se o usuario jś existe no banco de dados
   const user = await getUserByEmail(authData.email);
   if(user){
@@ -37,7 +37,7 @@ export async function createUserService(authData: TCreateUser) {
     ...authData,
     password: encryptedPassword
   }
-
+  delete userData.confirmPassword;
   // 3 - Salvar no banco de dados
   await storeUser(userData)
 }
@@ -67,7 +67,7 @@ async function generateToken(userId: number) {
   const SECRET: string = process.env.TOKEN_SECRET_KEY ?? '';
   const EXPIRES_IN = process.env.TOKEN_EXPIRES_IN;
 
-  const payload = { id: userId };
+  const payload = { userId };
 
   const jwtConfig = {
     expiresIn: EXPIRES_IN
