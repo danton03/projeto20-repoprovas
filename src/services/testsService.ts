@@ -1,4 +1,4 @@
-import { insertTest } from "../repositories/testsRepository";
+import { getTestsByDiscipline, insertTest } from "../repositories/testsRepository";
 import { TCreateTest, TTest } from "../types/testTypes";
 import { notFoundError } from "../utils/errorUtils";
 import * as categoriesService from "./categoriesService";
@@ -33,4 +33,8 @@ export async function createTestService(testData: TTest){
     teacherDisciplineId: teacherDiscipline.id
   }
   await insertTest(createTestData);
- }
+}
+
+export async function findTestsByDiscipline() {
+  return await getTestsByDiscipline();
+}
