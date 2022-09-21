@@ -10,11 +10,16 @@ beforeEach(async () => {
 describe('Testa a função de cadastro POST /signup', () => {
   it('Deve cadastrar o usuário com sucesso', async () => {
     const user = await userFactory();
-    const restult =  await supertest(app).post('/signup').send(user);
-    expect(restult.status).toEqual(201);
+    const result =  await supertest(app).post('/signup').send(user);
+    expect(result.status).toEqual(201);
   });
 
-  it.todo('Deve impedir o cadastro do mesmo usuário mais de uma vez');
+  it('Deve impedir o cadastro do mesmo usuário mais de uma vez', async () => {
+    const user = await userFactory();
+    await supertest(app).post("/signup").send(user);
+    const result = await supertest(app).post("/signup").send(user);
+    expect(result.status).toEqual(409);
+  });
 });
 
 afterAll(async () => {
