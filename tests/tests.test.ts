@@ -7,13 +7,20 @@ import testsFactory from "./factories/testFactory";
 import userFactory from "./factories/userFactory";
 
 beforeEach(async () => {
-  prisma.$executeRaw`TRUNCATE TABLE users`;
+  prisma.$executeRaw`TRUNCATE TABLE users RESTART IDENTITY`;
   prisma.$executeRaw`TRUNCATE TABLE categories CASCADE`;
   prisma.$executeRaw`TRUNCATE TABLE tests CASCADE`;
   prisma.$executeRaw`TRUNCATE TABLE disciplines CASCADE`;
   prisma.$executeRaw`TRUNCATE TABLE "teachersDisciplines" CASCADE`;
   prisma.$executeRaw`TRUNCATE TABLE terms CASCADE`;
-  prisma.$executeRaw`TRUNCATE TABLE teachers CASCADE`
+  prisma.$executeRaw`TRUNCATE TABLE teachers CASCADE`;
+
+  prisma.$executeRaw`TRUNCATE TABLE categories RESTART IDENTITY`;
+  prisma.$executeRaw`TRUNCATE TABLE tests RESTART IDENTITY`;
+  prisma.$executeRaw`TRUNCATE TABLE disciplines RESTART IDENTITY`;
+  prisma.$executeRaw`TRUNCATE TABLE "teachersDisciplines" RESTART IDENTITY`;
+  prisma.$executeRaw`TRUNCATE TABLE terms RESTART IDENTITY`;
+  prisma.$executeRaw`TRUNCATE TABLE teachers RESTART IDENTITY`
   await populateDb();
 });
 
@@ -26,7 +33,6 @@ describe("Testa a rota de criar provas POST /tests", () => {
       .set("Authorization", token)
       .send(test);
     expect(result.status).toEqual(201);
-    console.log(result.body);
   });
 
   it("Deve retornar 404 ao receber um valor não cadastrado em disciplina ou categoria", async () => {
@@ -58,4 +64,25 @@ async function generateToken() {
 
 afterAll(async () => {
   await prisma.$disconnect();
+});
+
+describe("Testa a listagem de provas por disciplina GET /tests/disciplines", () => {
+  it("Deve receber um array com as provas e status 200", async () => {
+    const token = await generateToken();
+    const result = await supertest(app).get("/tests/disciplines").set("Authorization", token);
+    expect(result.status).toEqual(200);
+    expect(result.body).toBeInstanceOf(Array);
+    expect(result.body.length).not.toEqual(0);
+  });
+
+  it("Deve receber status 401 ao acessar a rota sem enviar o token", async () => {
+    const result = await supertest(app).get("/tests/disciplines");
+    expect(result.status).toEqual(401);
+  });
+
+  it("Deve receber status 401 ao acessar a rota com um token inválido", async () => {
+    const token = "eyJhbGciOiSCUzI1NiIsInR5cCI6IkpXVCJ9.dc45ZCI6MSwiaWF0IjoxNjYyOTIyMj9cLCJleHAiOjE2NjMwMDg2NTF9.m0jwnkA8kPfHhYmj7x51vQsi36UsZxcxCFpecWoDc50"
+    const result = await supertest(app).get("/tests/disciplines").set("Authorization", token);
+    expect(result.status).toEqual(401);
+  });
 });
