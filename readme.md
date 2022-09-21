@@ -1,5 +1,5 @@
 <p align="center">
-  <img  src="./assets/repoprovas.png" height=290px>
+  <img  src="./assets/repoprovas.png" width=400px>
 </p>
 <h1 align="center">
   RepoProvas
