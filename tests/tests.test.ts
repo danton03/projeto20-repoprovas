@@ -81,8 +81,29 @@ describe("Testa a listagem de provas por disciplina GET /tests/disciplines", () 
   });
 
   it("Deve receber status 401 ao acessar a rota com um token inválido", async () => {
-    const token = "eyJhbGciOiSCUzI1NiIsInR5cCI6IkpXVCJ9.dc45ZCI6MSwiaWF0IjoxNjYyOTIyMj9cLCJleHAiOjE2NjMwMDg2NTF9.m0jwnkA8kPfHhYmj7x51vQsi36UsZxcxCFpecWoDc50"
+    const token = "eyJhbGciOiSCUzI1NiIsInR5cCI6IkpXVCJ9.dc45ZCI6MSwiaWF0IjoxNjYyOTIyMj9cLCJleHAiOjE2NjMwMDg2NTF9.m0jwnkA8kPfHhYmj7x51vQsi36UsZxcxCFpecWoDc50";
     const result = await supertest(app).get("/tests/disciplines").set("Authorization", token);
+    expect(result.status).toEqual(401);
+  });
+});
+
+describe("Testa a listagem de provas por professor GET /tests/teachers", () => {
+  it("Deve receber um array com as provas e status 200", async () => {
+    const token = await generateToken();
+    const result = await supertest(app).get("/tests/teachers").set("Authorization", token);
+    expect(result.status).toEqual(200);
+    expect(result.body).toBeInstanceOf(Array);
+    expect(result.body.length).not.toEqual(0);
+  });
+
+  it("Deve receber status 401 ao acessar a rota sem enviar o token", async () => {
+    const result = await supertest(app).get("/tests/teachers");
+    expect(result.status).toEqual(401);
+  });
+
+  it("Deve receber status 401 ao acessar a rota com um token inválido", async () => {
+    const token = "eyJhbGciOiSCUzI1NiIsInR5cCI6IkpXVCJ9.dc45ZCI6MSwiaWF0IjoxNjYyOTIyMj9cLCJleHAiOjE2NjMwMDg2NTF9.m0jwnkA8kPfHhYmj7x51vQsi36UsZxcxCFpecWoDc50";
+    const result = await supertest(app).get("/tests/teachers").set("Authorization", token);
     expect(result.status).toEqual(401);
   });
 });
