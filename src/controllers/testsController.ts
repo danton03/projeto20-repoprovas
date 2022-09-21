@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createTestService, findTestsByDiscipline } from "../services/testsService";
+import { createTestService, findTestsByDiscipline, findTestsByTeachers } from "../services/testsService";
 import { TTest } from "../types/testTypes";
 
 
@@ -10,6 +10,11 @@ export async function createTest(req:Request, res:Response) {
 }
 
 export async function listTestsByDiscipline(req: Request, res: Response) {
-  const tests = await findTestsByDiscipline();
-  res.status(200).send(tests);
+  const testsList = await findTestsByDiscipline();
+  res.status(200).send(testsList);
+}
+
+export async function listTestsByTeachers(req: Request, res: Response) {
+  const testsList = await findTestsByTeachers();
+  res.status(200).send(testsList);
 }

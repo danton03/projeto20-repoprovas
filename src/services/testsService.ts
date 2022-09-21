@@ -1,4 +1,4 @@
-import { getTestsByDiscipline, insertTest } from "../repositories/testsRepository";
+import { getTestsByDiscipline, getTestsByTeachers, insertTest } from "../repositories/testsRepository";
 import { TCreateTest, TTest } from "../types/testTypes";
 import { notFoundError } from "../utils/errorUtils";
 import * as categoriesService from "./categoriesService";
@@ -37,4 +37,8 @@ export async function createTestService(testData: TTest){
 
 export async function findTestsByDiscipline() {
   return await getTestsByDiscipline();
+}
+
+export async function findTestsByTeachers() {
+  return await getTestsByTeachers();
 }

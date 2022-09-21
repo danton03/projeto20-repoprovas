@@ -6,7 +6,7 @@ export async function insertTest(testData: TCreateTest) {
 }
 
 export async function getTestsByDiscipline() {
-  const tests = await prisma.terms.findMany({
+  const testsList = await prisma.terms.findMany({
     where: {},
     distinct: ["number"],
     select: {
@@ -36,5 +36,30 @@ export async function getTestsByDiscipline() {
     },
   });
 
-  return tests;
+  return testsList;
+}
+
+export async function getTestsByTeachers() {
+  const testsList = await prisma.teachers.findMany({
+    where: {},
+    distinct: ["name"],
+    select: {
+      name: true,
+      teachersDisciplines: {
+        select: {
+          discipline: { select: { name: true } },
+          Tests: {
+            select: {
+              name: true,
+              pdfUrl: true,
+              category: { select: { name: true } },
+            },
+            orderBy: { categoryId: "desc" },
+          },
+        },
+      },
+    },
+  });
+
+  return testsList;
 }
