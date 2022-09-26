@@ -283,7 +283,7 @@ Start the server
 Run integration tests
 
 ```bash
-  npm run dev
+  npm run test
 ```
 
 </br>
